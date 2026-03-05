@@ -9,16 +9,16 @@ const HeroSlider = () => {
   };
 
   return (
-    <section className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden">
+    <section className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden bg-black">
       {/* Streamable embed as background video */}
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-[-2px] overflow-hidden">
         <iframe
           src="https://streamable.com/e/amat0n?autoplay=1&muted=1&loop=1&nocontrols=1"
           frameBorder="0"
           allow="autoplay"
           allowFullScreen
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[177.78vh] min-w-full min-h-full h-auto"
-          style={{ border: "none" }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+          style={{ border: "none", width: "calc(177.78vh)", height: "calc(56.25vw)", minWidth: "100%", minHeight: "100%" }}
         />
       </div>
       <div className="absolute inset-0 bg-foreground/30 flex flex-col items-center justify-center z-10">
