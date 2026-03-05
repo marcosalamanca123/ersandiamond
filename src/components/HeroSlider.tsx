@@ -21,16 +21,10 @@ const HeroSlider = () => {
           style={{ border: "none", width: "calc(177.78vh)", height: "calc(56.25vw)", minWidth: "100%", minHeight: "100%" }}
         />
       </div>
-      <div className="absolute inset-0 bg-foreground/30 flex flex-col items-center justify-center z-10">
-        <h1 className="font-display text-3xl md:text-5xl text-background mb-3 text-center">
-          Lüks Koleksiyonlar
-        </h1>
-        <p className="font-body text-background/80 text-sm md:text-lg mb-8 text-center">
-          Eşsiz parçalarla tarzınızı yansıtın
-        </p>
+      <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 z-10">
         <button
           onClick={scrollDown}
-          className="pointer-events-auto inline-flex flex-col items-center gap-2 border border-background px-8 py-3 text-sm tracking-widest text-background hover:bg-background hover:text-foreground transition-colors font-body"
+          className="pointer-events-auto inline-flex flex-col items-center gap-2 border border-background/70 px-8 py-3 text-sm tracking-widest text-background/90 hover:bg-background hover:text-foreground transition-all duration-300 font-body backdrop-blur-sm"
         >
           KEŞFET
           <ChevronDown className="h-4 w-4 animate-bounce" />
