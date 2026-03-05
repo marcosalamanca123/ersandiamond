@@ -10,6 +10,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminProducts from "./pages/AdminProducts";
 import AdminUsers from "./pages/AdminUsers";
 import AdminSettings from "./pages/AdminSettings";
+import AdminBrands from "./pages/AdminBrands";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/marco/products" element={<AdminProducts />} />
           <Route path="/marco/users" element={<AdminUsers />} />
           <Route path="/marco/settings" element={<AdminSettings />} />
+          <Route path="/marco/brands" element={<AdminBrands />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
