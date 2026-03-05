@@ -150,11 +150,6 @@ const Category = () => {
                     <h3 className="font-body text-sm font-medium text-foreground line-clamp-2 mb-2">
                       {product.name}
                     </h3>
-                    {product.price > 0 && (
-                      <p className="font-display text-sm text-primary">
-                        {product.price.toLocaleString("tr-TR")} ₺
-                      </p>
-                    )}
                   </div>
                 </Link>
               ))}

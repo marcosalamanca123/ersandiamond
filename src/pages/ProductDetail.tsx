@@ -144,11 +144,6 @@ const ProductDetail = () => {
               <p className="text-xs text-muted-foreground font-body tracking-wider uppercase mb-4">
                 {product.category}
               </p>
-              {product.price > 0 && (
-                <p className="font-display text-2xl text-primary mb-6">
-                  {product.price.toLocaleString("tr-TR")} ₺
-                </p>
-              )}
               {product.description && (
                 <p className="text-muted-foreground font-body leading-relaxed mb-8">
                   {product.description}
