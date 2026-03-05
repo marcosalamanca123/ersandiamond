@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 
@@ -10,91 +10,182 @@ interface Brand {
   sort_order: number | null;
 }
 
-const BrandsSection = () => {
-  const [brands, setBrands] = useState<Brand[]>([]);
+interface Product {
+  id: string;
+  name: string;
+  brand: string;
+  category: string;
+  image_url: string | null;
+}
+
+const BrandRow = ({
+  brand,
+  products,
+  scrollOffset,
+}: {
+  brand: Brand;
+  products: Product[];
+  scrollOffset: number;
+}) => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [scrollPos, setScrollPos] = useState(0);
 
   useEffect(() => {
-    const fetchBrands = async () => {
-      const { data } = await supabase
-        .from("brands")
-        .select("*")
-        .order("sort_order", { ascending: true });
-      if (data) setBrands(data);
-    };
-    fetchBrands();
-  }, []);
-
-  // Auto-scroll carousel
-  useEffect(() => {
-    if (brands.length === 0) return;
-    const interval = setInterval(() => {
-      setScrollPos((prev) => prev + 1);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [brands.length]);
-
-  useEffect(() => {
-    if (scrollRef.current && brands.length > 0) {
-      const itemWidth = 320;
-      const maxScroll = brands.length;
-      const currentIndex = scrollPos % maxScroll;
-      scrollRef.current.scrollTo({
-        left: currentIndex * itemWidth,
-        behavior: "smooth",
-      });
+    if (scrollRef.current) {
+      scrollRef.current.style.transform = `translateX(-${scrollOffset}px)`;
     }
-  }, [scrollPos, brands.length]);
+  }, [scrollOffset]);
 
-  if (brands.length === 0) return null;
+  if (products.length === 0) return null;
 
-  // Duplicate brands for infinite loop effect
-  const displayBrands = [...brands, ...brands, ...brands];
+  // Triple for infinite loop
+  const displayProducts = [...products, ...products, ...products];
 
   return (
-    <section className="bg-muted py-16 overflow-hidden">
-      <div className="container mx-auto px-4">
-        <h2 className="font-display text-3xl text-center text-foreground mb-10">
-          Markalar
-        </h2>
+    <div className="mb-12">
+      <div className="container mx-auto px-4 mb-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {brand.image_url && (
+              <div className="w-10 h-10 rounded-full overflow-hidden border border-border flex-shrink-0">
+                <img src={brand.image_url} alt={brand.name} className="w-full h-full object-cover" />
+              </div>
+            )}
+            <h3 className="font-display text-xl text-foreground">{brand.name}</h3>
+          </div>
+          <Link
+            to={`/kategori/${brand.name.toLowerCase().replace(/\s+/g, "-")}`}
+            className="text-sm font-body tracking-wider text-primary hover:text-accent transition-colors"
+          >
+            TÜMÜNÜ GÖR →
+          </Link>
+        </div>
+      </div>
+      <div className="overflow-hidden">
         <div
           ref={scrollRef}
-          className="flex gap-8 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          className="flex gap-4 px-4 transition-transform duration-[50ms] ease-linear"
+          style={{ width: "max-content" }}
         >
-          {displayBrands.map((brand, index) => (
-            <div
-              key={`${brand.id}-${index}`}
-              className="flex-shrink-0 w-72 flex flex-col items-center text-center"
+          {displayProducts.map((product, index) => (
+            <Link
+              key={`${product.id}-${index}`}
+              to={`/urun/${product.id}`}
+              className="group flex-shrink-0 w-56 bg-card border border-border rounded overflow-hidden hover:shadow-lg transition-shadow"
             >
-              {brand.image_url && (
-                <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-border mb-4">
+              <div className="aspect-square overflow-hidden bg-muted">
+                {product.image_url ? (
                   <img
-                    src={brand.image_url}
-                    alt={brand.name}
-                    className="w-full h-full object-cover"
+                    src={product.image_url}
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                </div>
-              )}
-              <div className="flex items-center justify-center gap-4 mb-2">
-                <div className="h-px w-12 bg-primary" />
-                <h3 className="font-display text-2xl text-foreground">{brand.name}</h3>
-                <div className="h-px w-12 bg-primary" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs font-body">
+                    Görsel Yok
+                  </div>
+                )}
               </div>
-              {brand.description && (
-                <p className="text-muted-foreground font-body text-sm">{brand.description}</p>
-              )}
-              <Link
-                to={`/kategori/${brand.name.toLowerCase().replace(/\s+/g, "-")}`}
-                className="inline-block mt-4 text-sm font-medium text-primary hover:text-accent transition-colors tracking-wider"
-              >
-                KEŞFET →
-              </Link>
-            </div>
+              <div className="p-3">
+                <p className="text-xs text-muted-foreground font-body tracking-wider uppercase mb-1">
+                  {product.brand}
+                </p>
+                <h4 className="font-body text-sm font-medium text-foreground line-clamp-2">
+                  {product.name}
+                </h4>
+              </div>
+            </Link>
           ))}
         </div>
       </div>
+    </div>
+  );
+};
+
+const BrandsSection = () => {
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [productsByBrand, setProductsByBrand] = useState<Record<string, Product[]>>({});
+  const [scrollOffset, setScrollOffset] = useState(0);
+  const animationRef = useRef<number>();
+  const isPaused = useRef(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data: brandsData } = await supabase
+        .from("brands")
+        .select("*")
+        .order("sort_order", { ascending: true });
+      if (!brandsData) return;
+      setBrands(brandsData);
+
+      // Fetch products with their first image for each brand
+      const { data: productsData } = await supabase
+        .from("products")
+        .select("id, name, brand, category");
+      
+      if (productsData) {
+        // Get first image for each product
+        const { data: imagesData } = await supabase
+          .from("product_images")
+          .select("product_id, image_url")
+          .order("sort_order", { ascending: true });
+
+        const imageMap: Record<string, string> = {};
+        imagesData?.forEach((img) => {
+          if (!imageMap[img.product_id]) imageMap[img.product_id] = img.image_url;
+        });
+
+        const grouped: Record<string, Product[]> = {};
+        productsData.forEach((p) => {
+          const key = p.brand.toLowerCase();
+          if (!grouped[key]) grouped[key] = [];
+          grouped[key].push({ ...p, image_url: imageMap[p.id] || null });
+        });
+        setProductsByBrand(grouped);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const animate = useCallback(() => {
+    if (!isPaused.current) {
+      setScrollOffset((prev) => {
+        // Reset at a reasonable point to prevent overflow
+        const resetPoint = 240 * 20; // ~item width * count
+        return prev >= resetPoint ? 0 : prev + 0.5;
+      });
+    }
+    animationRef.current = requestAnimationFrame(animate);
+  }, []);
+
+  useEffect(() => {
+    if (brands.length === 0) return;
+    animationRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    };
+  }, [brands.length, animate]);
+
+  if (brands.length === 0) return null;
+
+  return (
+    <section
+      className="bg-background py-16 overflow-hidden"
+      onMouseEnter={() => { isPaused.current = true; }}
+      onMouseLeave={() => { isPaused.current = false; }}
+    >
+      <div className="container mx-auto px-4 mb-10">
+        <h2 className="font-display text-3xl text-center text-foreground">
+          Markalar
+        </h2>
+      </div>
+      {brands.map((brand) => (
+        <BrandRow
+          key={brand.id}
+          brand={brand}
+          products={productsByBrand[brand.name.toLowerCase()] || []}
+          scrollOffset={scrollOffset}
+        />
+      ))}
     </section>
   );
 };
