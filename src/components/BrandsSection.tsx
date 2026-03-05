@@ -30,20 +30,18 @@ const BrandRow = ({
   return (
     <div className="mb-12">
       <div className="container mx-auto px-4 mb-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            {brand.image_url && (
-              <div className="w-10 h-10 rounded-full overflow-hidden border border-border flex-shrink-0">
-                <img src={brand.image_url} alt={brand.name} className="w-full h-full object-cover" />
-              </div>
-            )}
-            <h3 className="font-display text-xl text-foreground">{brand.name}</h3>
-          </div>
+        <div className="flex flex-col items-center gap-2 mb-6">
+          {brand.image_url && (
+            <div className="w-14 h-14 rounded-full overflow-hidden border border-border">
+              <img src={brand.image_url} alt={brand.name} className="w-full h-full object-cover" />
+            </div>
+          )}
+          <h3 className="font-display text-2xl tracking-[0.15em] text-foreground italic">{brand.name}</h3>
           <Link
             to={`/kategori/${brand.name.toLowerCase().replace(/\s+/g, "-")}`}
-            className="text-sm font-body tracking-wider text-primary hover:text-accent transition-colors"
+            className="text-xs font-body tracking-widest text-primary hover:text-accent transition-colors uppercase"
           >
-            TÜMÜNÜ GÖR →
+            Tümünü Gör →
           </Link>
         </div>
       </div>
@@ -135,16 +133,32 @@ const BrandsSection = () => {
   return (
     <section className="bg-background py-16">
       <div className="container mx-auto px-4 mb-10">
-        <h2 className="font-display text-3xl text-center text-foreground">
+        <h2 className="font-display text-3xl text-center text-foreground italic tracking-[0.2em]">
           Markalar
         </h2>
       </div>
-      {brands.map((brand) => (
-        <BrandRow
-          key={brand.id}
-          brand={brand}
-          products={productsByBrand[brand.name.toLowerCase()] || []}
-        />
+      {brands.map((brand, index) => (
+        <div key={brand.id}>
+          <BrandRow
+            brand={brand}
+            products={productsByBrand[brand.name.toLowerCase()] || []}
+          />
+          {/* Video between Rolex (sort_order 2) and Patek (sort_order 3) */}
+          {brand.sort_order === 2 && (
+            <div className="relative w-full h-[40vh] md:h-[50vh] overflow-hidden mb-12 bg-black">
+              <div className="absolute inset-[-2px] overflow-hidden">
+                <iframe
+                  src="https://streamable.com/e/iqao6h?autoplay=1&muted=1&loop=1&nocontrols=1"
+                  frameBorder="0"
+                  allow="autoplay"
+                  allowFullScreen
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                  style={{ border: "none", width: "calc(177.78vh)", height: "calc(56.25vw)", minWidth: "100%", minHeight: "100%" }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
       ))}
     </section>
   );
