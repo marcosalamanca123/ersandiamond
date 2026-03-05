@@ -11,10 +11,12 @@ type ProductImage = Tables<"product_images">;
 const AdminProducts = () => {
   const { toast } = useToast();
   const [products, setProducts] = useState<(Product & { images: ProductImage[] })[]>([]);
+  const [brands, setBrands] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ name: "", brand: "", price: "", category: "", description: "", is_featured: false });
+  const [pendingImages, setPendingImages] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
 
   const fetchProducts = async () => {
@@ -32,12 +34,19 @@ const AdminProducts = () => {
     setLoading(false);
   };
 
+  const fetchBrands = async () => {
+    const { data } = await supabase.from("brands").select("id, name").order("name");
+    if (data) setBrands(data);
+  };
+
   useEffect(() => {
     fetchProducts();
+    fetchBrands();
   }, []);
 
   const resetForm = () => {
     setForm({ name: "", brand: "", price: "", category: "", description: "", is_featured: false });
+    setPendingImages([]);
     setEditingId(null);
     setShowForm(false);
   };
@@ -62,10 +71,14 @@ const AdminProducts = () => {
       }
       toast({ title: "Başarılı", description: "Ürün güncellendi." });
     } else {
-      const { error } = await supabase.from("products").insert(payload);
+      const { data, error } = await supabase.from("products").insert(payload).select().single();
       if (error) {
         toast({ title: "Hata", description: error.message, variant: "destructive" });
         return;
+      }
+      // Upload pending images for new product
+      if (data && pendingImages.length > 0) {
+        await handleImageUpload(data.id, pendingImages);
       }
       toast({ title: "Başarılı", description: "Ürün eklendi." });
     }
@@ -98,7 +111,7 @@ const AdminProducts = () => {
     setShowForm(true);
   };
 
-  const handleImageUpload = async (productId: string, files: FileList) => {
+  const handleImageUpload = async (productId: string, files: FileList | File[]) => {
     setUploading(true);
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
@@ -159,8 +172,14 @@ const AdminProducts = () => {
             </div>
             <div>
               <label className="block text-xs text-muted-foreground font-body mb-1">Marka</label>
-              <input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })}
-                className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary" required />
+              <select value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })}
+                className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary" required>
+                <option value="">Seçiniz</option>
+                {brands.map((b) => (
+                  <option key={b.id} value={b.name}>{b.name}</option>
+                ))}
+              </select>
+            </div>
             </div>
             <div>
               <label className="block text-xs text-muted-foreground font-body mb-1">Fiyat (₺)</label>
@@ -183,6 +202,39 @@ const AdminProducts = () => {
               <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
                 rows={3} className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
             </div>
+            {!editingId && (
+              <div className="md:col-span-2">
+                <label className="block text-xs text-muted-foreground font-body mb-1">Görseller</label>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {pendingImages.map((file, i) => (
+                    <div key={i} className="relative group w-16 h-16 rounded overflow-hidden border border-border">
+                      <img src={URL.createObjectURL(file)} alt="" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setPendingImages(pendingImages.filter((_, idx) => idx !== i))}
+                        className="absolute inset-0 bg-foreground/50 text-background flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                  <label className="w-16 h-16 rounded border border-dashed border-border flex items-center justify-center cursor-pointer hover:border-primary transition-colors">
+                    <Upload className="h-4 w-4 text-muted-foreground" />
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        if (e.target.files) {
+                          setPendingImages([...pendingImages, ...Array.from(e.target.files)]);
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+              </div>
+            )}
             <div className="flex items-center gap-2">
               <input type="checkbox" checked={form.is_featured} onChange={(e) => setForm({ ...form, is_featured: e.target.checked })}
                 className="rounded border-border" id="featured" />
