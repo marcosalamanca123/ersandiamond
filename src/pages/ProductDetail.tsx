@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Heart, ChevronLeft } from "lucide-react";
+import { Heart, ChevronLeft, Star, Shield, Truck, Award, RefreshCw, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
@@ -135,38 +135,68 @@ const ProductDetail = () => {
             </div>
 
             <div className="flex flex-col justify-center">
-              <p className="text-xs text-muted-foreground font-body tracking-widest uppercase mb-2">
-                {product.brand}
-              </p>
-              <h1 className="font-display text-3xl md:text-4xl text-foreground mb-2">
+              <h1 className="font-display text-2xl md:text-3xl text-foreground mb-1">
                 {product.name}
               </h1>
-              <p className="text-xs text-muted-foreground font-body tracking-wider uppercase mb-4">
-                {product.category}
-              </p>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="flex text-yellow-500">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-current" />
+                  ))}
+                </div>
+                <span className="text-xs text-muted-foreground font-body">0 değerlendirme</span>
+              </div>
+
               {product.description && (
-                <p className="text-muted-foreground font-body leading-relaxed mb-8">
+                <p className="text-sm text-muted-foreground font-body leading-relaxed mb-6">
                   {product.description}
                 </p>
               )}
 
-              <div className="flex gap-3">
-                <button
-                  onClick={handleWhatsApp}
-                  className="flex-1 flex items-center justify-center gap-3 bg-[hsl(142,70%,40%)] hover:bg-[hsl(142,70%,35%)] text-white py-4 px-6 text-sm font-body font-semibold tracking-wider rounded transition-colors"
-                >
-                  <WhatsAppIcon />
-                  WHATSAPP İLE SATIN AL
-                </button>
-                <button className="w-12 h-12 flex items-center justify-center border border-border rounded text-foreground hover:text-accent hover:border-accent transition-colors">
-                  <Heart className="h-5 w-5" />
-                </button>
+              <button
+                onClick={handleWhatsApp}
+                className="w-full flex items-center justify-center gap-3 bg-[hsl(142,70%,40%)] hover:bg-[hsl(142,70%,35%)] text-white py-4 px-6 text-sm font-body font-semibold tracking-wider rounded transition-colors mb-4"
+              >
+                <WhatsAppIcon />
+                WHATSAPP İLE BİLGİ AL
+              </button>
+
+              <button className="flex items-center gap-2 text-sm text-foreground font-body mb-2">
+                <Heart className="h-4 w-4" />
+                Favorilerime Ekle
+              </button>
+
+              <p className="flex items-center gap-2 text-xs text-muted-foreground font-body mb-6">
+                <Eye className="h-4 w-4" />
+                <span><strong className="text-foreground">196</strong> ziyaretçi tarafından görüntülendi.</span>
+              </p>
+
+              {/* Trust badges */}
+              <div className="border border-border rounded-lg p-5 mb-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                  <div className="flex flex-col items-center gap-2">
+                    <Truck className="h-7 w-7 text-primary" />
+                    <span className="text-[11px] font-body text-foreground leading-tight">Sigortalı ve Hızlı Kargo</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-2">
+                    <Award className="h-7 w-7 text-primary" />
+                    <span className="text-[11px] font-body text-foreground leading-tight">Orijinal Ürün Sertifikası</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-2">
+                    <Shield className="h-7 w-7 text-primary" />
+                    <span className="text-[11px] font-body text-foreground leading-tight">Güvenli Alışveriş</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-2">
+                    <RefreshCw className="h-7 w-7 text-primary" />
+                    <span className="text-[11px] font-body text-foreground leading-tight">Kolay Değişim</span>
+                  </div>
+                </div>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-border space-y-3 text-sm text-muted-foreground font-body">
-                <p>✓ Orijinal sertifika dahil</p>
-                <p>✓ Ücretsiz kargo</p>
-                <p>✓ 14 gün iade garantisi</p>
+              {/* Product info */}
+              <div className="space-y-2 text-sm font-body">
+                <p><span className="text-muted-foreground">Kategorisi:</span> <span className="text-foreground">{product.category}</span></p>
+                <p><span className="text-muted-foreground">Marka:</span> <span className="text-foreground">{product.brand}</span></p>
               </div>
             </div>
           </div>
