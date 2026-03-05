@@ -35,10 +35,9 @@ const BrandRow = ({
     }
   }, [scrollOffset]);
 
-  if (products.length === 0) return null;
-
-  // Triple for infinite loop
-  const displayProducts = [...products, ...products, ...products];
+  // Show brand info even without products
+  const hasProducts = products.length > 0;
+  const displayProducts = hasProducts ? [...products, ...products, ...products] : [];
 
   return (
     <div className="mb-12">
@@ -60,43 +59,49 @@ const BrandRow = ({
           </Link>
         </div>
       </div>
-      <div className="overflow-hidden">
-        <div
-          ref={scrollRef}
-          className="flex gap-4 px-4 transition-transform duration-[50ms] ease-linear"
-          style={{ width: "max-content" }}
-        >
-          {displayProducts.map((product, index) => (
-            <Link
-              key={`${product.id}-${index}`}
-              to={`/urun/${product.id}`}
-              className="group flex-shrink-0 w-56 bg-card border border-border rounded overflow-hidden hover:shadow-lg transition-shadow"
-            >
-              <div className="aspect-square overflow-hidden bg-muted">
-                {product.image_url ? (
-                  <img
-                    src={product.image_url}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs font-body">
-                    Görsel Yok
-                  </div>
-                )}
-              </div>
-              <div className="p-3">
-                <p className="text-xs text-muted-foreground font-body tracking-wider uppercase mb-1">
-                  {product.brand}
-                </p>
-                <h4 className="font-body text-sm font-medium text-foreground line-clamp-2">
-                  {product.name}
-                </h4>
-              </div>
-            </Link>
-          ))}
+      {hasProducts ? (
+        <div className="overflow-hidden">
+          <div
+            ref={scrollRef}
+            className="flex gap-4 px-4 transition-transform duration-[50ms] ease-linear"
+            style={{ width: "max-content" }}
+          >
+            {displayProducts.map((product, index) => (
+              <Link
+                key={`${product.id}-${index}`}
+                to={`/urun/${product.id}`}
+                className="group flex-shrink-0 w-56 bg-card border border-border rounded overflow-hidden hover:shadow-lg transition-shadow"
+              >
+                <div className="aspect-square overflow-hidden bg-muted">
+                  {product.image_url ? (
+                    <img
+                      src={product.image_url}
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs font-body">
+                      Görsel Yok
+                    </div>
+                  )}
+                </div>
+                <div className="p-3">
+                  <p className="text-xs text-muted-foreground font-body tracking-wider uppercase mb-1">
+                    {product.brand}
+                  </p>
+                  <h4 className="font-body text-sm font-medium text-foreground line-clamp-2">
+                    {product.name}
+                  </h4>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="container mx-auto px-4">
+          <p className="text-sm text-muted-foreground font-body">Henüz ürün eklenmemiş.</p>
+        </div>
+      )}
     </div>
   );
 };
