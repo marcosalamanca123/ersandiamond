@@ -35,7 +35,7 @@ const AdminLogin = () => {
       return;
     }
 
-    navigate("/admin");
+    navigate("/marco");
     setLoading(false);
   };
 
