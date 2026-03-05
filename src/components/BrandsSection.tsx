@@ -52,7 +52,7 @@ const BrandRow = ({
               <Link
                 key={product.id}
                 to={`/urun/${product.id}`}
-                className="group bg-card border border-border rounded overflow-hidden hover:shadow-lg transition-shadow"
+                className="group bg-card rounded overflow-hidden hover:shadow-lg transition-shadow"
               >
                 <div className="aspect-square overflow-hidden bg-muted">
                   {product.image_url ? (
