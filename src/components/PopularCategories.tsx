@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import brandHermes from "@/assets/brand-hermes.png";
 import brandRolex from "@/assets/brand-rolex.png";
 import brandPatek from "@/assets/brand-patek.png";
@@ -6,12 +7,12 @@ import popularWatches from "@/assets/popular-watches.png";
 import brandAP from "@/assets/brand-ap.png";
 
 const popularCategories = [
-  { name: "HERMES", image: brandHermes },
-  { name: "ROLEX", image: brandRolex },
-  { name: "PATEK PHİLİPPE", image: brandPatek },
-  { name: "ÇANTALAR", image: popularBags },
-  { name: "SAATLER", image: popularWatches },
-  { name: "AUDEMARS PİGUET", image: brandAP },
+  { name: "HERMES", image: brandHermes, slug: "hermes" },
+  { name: "ROLEX", image: brandRolex, slug: "rolex" },
+  { name: "PATEK PHİLİPPE", image: brandPatek, slug: "patek-philippe" },
+  { name: "ÇANTALAR", image: popularBags, slug: "cantalar" },
+  { name: "SAATLER", image: popularWatches, slug: "saatler" },
+  { name: "AUDEMARS PİGUET", image: brandAP, slug: "audemars-piguet" },
 ];
 
 const PopularCategories = () => {
@@ -23,22 +24,18 @@ const PopularCategories = () => {
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
           {popularCategories.map((cat) => (
-            <a
+            <Link
               key={cat.name}
-              href="#"
+              to={`/kategori/${cat.slug}`}
               className="group flex flex-col items-center text-center"
             >
               <div className="mb-3 w-28 h-28 rounded-full overflow-hidden border-2 border-border group-hover:border-primary transition-colors">
-                <img
-                  src={cat.image}
-                  alt={cat.name}
-                  className="w-full h-full object-cover"
-                />
+                <img src={cat.image} alt={cat.name} className="w-full h-full object-cover" />
               </div>
               <span className="text-xs font-medium tracking-wider text-foreground group-hover:text-primary transition-colors font-body">
                 {cat.name}
               </span>
-            </a>
+            </Link>
           ))}
         </div>
       </div>

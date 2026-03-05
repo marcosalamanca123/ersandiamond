@@ -1,47 +1,99 @@
-import brandHermes from "@/assets/brand-hermes.png";
-import brandRolex from "@/assets/brand-rolex.png";
-import brandPatek from "@/assets/brand-patek.png";
-import brandAP from "@/assets/brand-ap.png";
+import { useEffect, useState, useRef } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Link } from "react-router-dom";
 
-const brands = [
-  { name: "Hermes", image: brandHermes, description: "Hermes en çok beğenilen ürünleriyle tarzını zirveye taşı! Şimdi keşfet!" },
-  { name: "Rolex", image: brandRolex, description: "Rolex saatlerin zarafeti ve kalitesiyle fark yarat. Koleksiyonu keşfet!" },
-  { name: "Patek Philippe", image: brandPatek, description: "Patek Philippe ile zamansız bir şıklık. Eşsiz koleksiyonu incele!" },
-  { name: "Audemars Piguet", image: brandAP, description: "Audemars Piguet ile lüksün zirvesini deneyimle!" },
-];
+interface Brand {
+  id: string;
+  name: string;
+  description: string | null;
+  image_url: string | null;
+  sort_order: number | null;
+}
 
 const BrandsSection = () => {
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [scrollPos, setScrollPos] = useState(0);
+
+  useEffect(() => {
+    const fetchBrands = async () => {
+      const { data } = await supabase
+        .from("brands")
+        .select("*")
+        .order("sort_order", { ascending: true });
+      if (data) setBrands(data);
+    };
+    fetchBrands();
+  }, []);
+
+  // Auto-scroll carousel
+  useEffect(() => {
+    if (brands.length === 0) return;
+    const interval = setInterval(() => {
+      setScrollPos((prev) => prev + 1);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [brands.length]);
+
+  useEffect(() => {
+    if (scrollRef.current && brands.length > 0) {
+      const itemWidth = 320;
+      const maxScroll = brands.length;
+      const currentIndex = scrollPos % maxScroll;
+      scrollRef.current.scrollTo({
+        left: currentIndex * itemWidth,
+        behavior: "smooth",
+      });
+    }
+  }, [scrollPos, brands.length]);
+
+  if (brands.length === 0) return null;
+
+  // Duplicate brands for infinite loop effect
+  const displayBrands = [...brands, ...brands, ...brands];
+
   return (
-    <section className="bg-muted py-16">
+    <section className="bg-muted py-16 overflow-hidden">
       <div className="container mx-auto px-4">
-        {brands.map((brand, index) => (
-          <div
-            key={brand.name}
-            className={`flex flex-col md:flex-row items-center gap-8 mb-16 last:mb-0 ${
-              index % 2 === 1 ? "md:flex-row-reverse" : ""
-            }`}
-          >
-            <div className="flex-shrink-0">
-              <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-border">
-                <img src={brand.image} alt={brand.name} className="w-full h-full object-cover" />
-              </div>
-            </div>
-            <div className="text-center md:text-left">
-              <div className="flex items-center justify-center md:justify-start gap-4 mb-2">
+        <h2 className="font-display text-3xl text-center text-foreground mb-10">
+          Markalar
+        </h2>
+        <div
+          ref={scrollRef}
+          className="flex gap-8 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {displayBrands.map((brand, index) => (
+            <div
+              key={`${brand.id}-${index}`}
+              className="flex-shrink-0 w-72 flex flex-col items-center text-center"
+            >
+              {brand.image_url && (
+                <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-border mb-4">
+                  <img
+                    src={brand.image_url}
+                    alt={brand.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <div className="flex items-center justify-center gap-4 mb-2">
                 <div className="h-px w-12 bg-primary" />
                 <h3 className="font-display text-2xl text-foreground">{brand.name}</h3>
                 <div className="h-px w-12 bg-primary" />
               </div>
-              <p className="text-muted-foreground font-body">{brand.description}</p>
-              <a
-                href="#"
+              {brand.description && (
+                <p className="text-muted-foreground font-body text-sm">{brand.description}</p>
+              )}
+              <Link
+                to={`/kategori/${brand.name.toLowerCase().replace(/\s+/g, "-")}`}
                 className="inline-block mt-4 text-sm font-medium text-primary hover:text-accent transition-colors tracking-wider"
               >
                 KEŞFET →
-              </a>
+              </Link>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );

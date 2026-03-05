@@ -7,6 +7,7 @@ import { Save } from "lucide-react";
 const settingsKeys = [
   { key: "site_name", label: "Site Adı" },
   { key: "phone", label: "Telefon" },
+  { key: "whatsapp_number", label: "WhatsApp Numarası (ülke kodu ile, örn: 905551234567)" },
   { key: "email", label: "E-posta" },
   { key: "address", label: "Adres" },
   { key: "announcement", label: "Duyuru Metni" },
@@ -35,7 +36,11 @@ const AdminSettings = () => {
     setSaving(true);
     for (const { key } of settingsKeys) {
       if (settings[key] !== undefined) {
-        await supabase.from("site_settings").update({ value: settings[key] }).eq("key", key);
+        // Upsert: try update first, if no rows affected, insert
+        const { data } = await supabase.from("site_settings").update({ value: settings[key] }).eq("key", key).select();
+        if (!data || data.length === 0) {
+          await supabase.from("site_settings").insert({ key, value: settings[key] });
+        }
       }
     }
     toast({ title: "Kaydedildi", description: "Site ayarları güncellendi." });
