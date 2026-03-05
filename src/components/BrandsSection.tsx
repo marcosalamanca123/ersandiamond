@@ -148,7 +148,7 @@ const BrandsSection = () => {
             <div className="relative w-full py-16 md:py-20 mb-12 bg-black overflow-hidden">
               <div className="container mx-auto px-4 text-center relative z-10">
                 <p className="text-xs md:text-sm tracking-[0.4em] text-white/50 font-body uppercase mb-3">
-                  Worldwide Shipping
+                  Ersan Diamond
                 </p>
                 <h3 className="font-display text-3xl md:text-5xl tracking-[0.2em] text-white italic mb-4">
                   Güvenli Kargo
