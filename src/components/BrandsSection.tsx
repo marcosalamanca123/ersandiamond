@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 
@@ -21,23 +21,11 @@ interface Product {
 const BrandRow = ({
   brand,
   products,
-  scrollOffset,
 }: {
   brand: Brand;
   products: Product[];
-  scrollOffset: number;
 }) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.style.transform = `translateX(-${scrollOffset}px)`;
-    }
-  }, [scrollOffset]);
-
-  // Show brand info even without products
   const hasProducts = products.length > 0;
-  const displayProducts = hasProducts ? [...products, ...products, ...products] : [];
 
   return (
     <div className="mb-12">
@@ -60,17 +48,13 @@ const BrandRow = ({
         </div>
       </div>
       {hasProducts ? (
-        <div className="overflow-hidden">
-          <div
-            ref={scrollRef}
-            className="flex gap-4 px-4 transition-transform duration-[50ms] ease-linear"
-            style={{ width: "max-content" }}
-          >
-            {displayProducts.map((product, index) => (
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {products.map((product) => (
               <Link
-                key={`${product.id}-${index}`}
+                key={product.id}
                 to={`/urun/${product.id}`}
-                className="group flex-shrink-0 w-56 bg-card border border-border rounded overflow-hidden hover:shadow-lg transition-shadow"
+                className="group bg-card border border-border rounded overflow-hidden hover:shadow-lg transition-shadow"
               >
                 <div className="aspect-square overflow-hidden bg-muted">
                   {product.image_url ? (
@@ -109,9 +93,6 @@ const BrandRow = ({
 const BrandsSection = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productsByBrand, setProductsByBrand] = useState<Record<string, Product[]>>({});
-  const [scrollOffset, setScrollOffset] = useState(0);
-  const animationRef = useRef<number>();
-  const isPaused = useRef(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -122,13 +103,11 @@ const BrandsSection = () => {
       if (!brandsData) return;
       setBrands(brandsData);
 
-      // Fetch products with their first image for each brand
       const { data: productsData } = await supabase
         .from("products")
         .select("id, name, brand, category");
       
       if (productsData) {
-        // Get first image for each product
         const { data: imagesData } = await supabase
           .from("product_images")
           .select("product_id, image_url")
@@ -151,33 +130,10 @@ const BrandsSection = () => {
     fetchData();
   }, []);
 
-  const animate = useCallback(() => {
-    if (!isPaused.current) {
-      setScrollOffset((prev) => {
-        // Reset at a reasonable point to prevent overflow
-        const resetPoint = 240 * 20; // ~item width * count
-        return prev >= resetPoint ? 0 : prev + 0.5;
-      });
-    }
-    animationRef.current = requestAnimationFrame(animate);
-  }, []);
-
-  useEffect(() => {
-    if (brands.length === 0) return;
-    animationRef.current = requestAnimationFrame(animate);
-    return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-    };
-  }, [brands.length, animate]);
-
   if (brands.length === 0) return null;
 
   return (
-    <section
-      className="bg-background py-16 overflow-hidden"
-      onMouseEnter={() => { isPaused.current = true; }}
-      onMouseLeave={() => { isPaused.current = false; }}
-    >
+    <section className="bg-background py-16">
       <div className="container mx-auto px-4 mb-10">
         <h2 className="font-display text-3xl text-center text-foreground">
           Markalar
@@ -188,7 +144,6 @@ const BrandsSection = () => {
           key={brand.id}
           brand={brand}
           products={productsByBrand[brand.name.toLowerCase()] || []}
-          scrollOffset={scrollOffset}
         />
       ))}
     </section>
