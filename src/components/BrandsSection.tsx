@@ -145,17 +145,20 @@ const BrandsSection = () => {
           />
           {/* Video between Rolex (sort_order 2) and Patek (sort_order 3) */}
           {brand.sort_order === 2 && (
-            <div className="relative w-full h-[30vh] md:h-[40vh] overflow-hidden mb-12 bg-black">
-              <iframe
-                src="https://streamable.com/e/iqao6h?autoplay=1&muted=1&loop=1&nocontrols=1"
-                frameBorder="0"
-                allow="autoplay"
-                allowFullScreen
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none scale-[1.8]"
-                style={{ border: "none", width: "100vw", height: "56.25vw" }}
-              />
-              {/* Hide Streamable logo */}
-              <div className="absolute bottom-0 left-0 w-24 h-10 bg-black z-10" />
+            <div className="relative w-full py-16 md:py-20 mb-12 bg-black overflow-hidden">
+              <div className="container mx-auto px-4 text-center relative z-10">
+                <p className="text-xs md:text-sm tracking-[0.4em] text-white/50 font-body uppercase mb-3">
+                  Worldwide Shipping
+                </p>
+                <h3 className="font-display text-3xl md:text-5xl tracking-[0.2em] text-white italic mb-4">
+                  Güvenli Kargo
+                </h3>
+                <p className="text-sm md:text-base text-white/60 font-body max-w-lg mx-auto leading-relaxed">
+                  Tüm ürünlerimiz özel sigortalı ve güvenli paketleme ile kapınıza kadar ulaştırılır.
+                </p>
+              </div>
+              {/* Decorative line */}
+              <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-y-1/2" />
             </div>
           )}
         </div>
