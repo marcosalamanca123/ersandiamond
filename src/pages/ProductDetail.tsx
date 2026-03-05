@@ -1,6 +1,5 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { sampleProducts } from "@/data/products";
 import { Heart, ChevronLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import TopBar from "@/components/TopBar";
@@ -14,22 +13,38 @@ const WhatsAppIcon = () => (
   </svg>
 );
 
+interface Product {
+  id: string;
+  name: string;
+  brand: string;
+  category: string;
+  price: number;
+  description: string | null;
+}
+
 const ProductDetail = () => {
   const { id } = useParams();
-  const product = sampleProducts.find((p) => p.id === id);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [images, setImages] = useState<string[]>([]);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [whatsappNumber, setWhatsappNumber] = useState("905551234567");
 
   useEffect(() => {
-    const fetchWhatsapp = async () => {
-      const { data } = await supabase
-        .from("site_settings")
-        .select("value")
-        .eq("key", "whatsapp_number")
-        .maybeSingle();
-      if (data?.value) setWhatsappNumber(data.value);
+    const fetchData = async () => {
+      setLoading(true);
+      const [{ data: prod }, { data: imgs }, { data: wp }] = await Promise.all([
+        supabase.from("products").select("*").eq("id", id!).single(),
+        supabase.from("product_images").select("image_url").eq("product_id", id!).order("sort_order", { ascending: true }),
+        supabase.from("site_settings").select("value").eq("key", "whatsapp_number").maybeSingle(),
+      ]);
+      if (prod) setProduct(prod);
+      if (imgs) setImages(imgs.map((i) => i.image_url));
+      if (wp?.value) setWhatsappNumber(wp.value);
+      setLoading(false);
     };
-    fetchWhatsapp();
-  }, []);
+    if (id) fetchData();
+  }, [id]);
 
   const handleWhatsApp = () => {
     if (!product) return;
@@ -38,6 +53,20 @@ const ProductDetail = () => {
     );
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank");
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <TopBar />
+        <Header />
+        <CategoryNav />
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-muted-foreground font-body">Yükleniyor...</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -74,12 +103,35 @@ const ProductDetail = () => {
           </Link>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-            <div className="aspect-square rounded overflow-hidden bg-muted">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover"
-              />
+            <div>
+              <div className="aspect-square rounded overflow-hidden bg-muted mb-3">
+                {images.length > 0 ? (
+                  <img
+                    src={images[selectedImage]}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm font-body">
+                    Görsel Yok
+                  </div>
+                )}
+              </div>
+              {images.length > 1 && (
+                <div className="flex gap-2">
+                  {images.map((img, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setSelectedImage(i)}
+                      className={`w-16 h-16 rounded overflow-hidden border-2 transition-colors ${
+                        i === selectedImage ? "border-primary" : "border-border"
+                      }`}
+                    >
+                      <img src={img} alt="" className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col justify-center">
@@ -89,12 +141,19 @@ const ProductDetail = () => {
               <h1 className="font-display text-3xl md:text-4xl text-foreground mb-2">
                 {product.name}
               </h1>
-              <p className="text-xs text-muted-foreground font-body tracking-wider uppercase mb-6">
+              <p className="text-xs text-muted-foreground font-body tracking-wider uppercase mb-4">
                 {product.category}
               </p>
-              <p className="text-muted-foreground font-body leading-relaxed mb-8">
-                {product.description}
-              </p>
+              {product.price > 0 && (
+                <p className="font-display text-2xl text-primary mb-6">
+                  {product.price.toLocaleString("tr-TR")} ₺
+                </p>
+              )}
+              {product.description && (
+                <p className="text-muted-foreground font-body leading-relaxed mb-8">
+                  {product.description}
+                </p>
+              )}
 
               <div className="flex gap-3">
                 <button
