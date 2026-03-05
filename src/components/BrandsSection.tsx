@@ -151,9 +151,11 @@ const BrandsSection = () => {
                 frameBorder="0"
                 allow="autoplay"
                 allowFullScreen
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                style={{ border: "none", width: "177.78vh", height: "56.25vw", minWidth: "100%", minHeight: "100%" }}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none scale-[1.8]"
+                style={{ border: "none", width: "100vw", height: "56.25vw" }}
               />
+              {/* Hide Streamable logo */}
+              <div className="absolute bottom-0 left-0 w-24 h-10 bg-black z-10" />
             </div>
           )}
         </div>
