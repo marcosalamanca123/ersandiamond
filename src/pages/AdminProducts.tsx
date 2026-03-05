@@ -180,7 +180,6 @@ const AdminProducts = () => {
                 ))}
               </select>
             </div>
-            </div>
             <div>
               <label className="block text-xs text-muted-foreground font-body mb-1">Fiyat (₺)</label>
               <input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })}
