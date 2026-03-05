@@ -10,10 +10,10 @@ interface AdminLayoutProps {
 }
 
 const navItems = [
-  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { name: "Ürünler", href: "/admin/products", icon: Package },
-  { name: "Kullanıcılar", href: "/admin/users", icon: Users },
-  { name: "Site Ayarları", href: "/admin/settings", icon: Settings },
+  { name: "Dashboard", href: "/marco", icon: LayoutDashboard },
+  { name: "Ürünler", href: "/marco/products", icon: Package },
+  { name: "Kullanıcılar", href: "/marco/users", icon: Users },
+  { name: "Site Ayarları", href: "/marco/settings", icon: Settings },
 ];
 
 const AdminLayout = ({ children, title }: AdminLayoutProps) => {
@@ -23,7 +23,7 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate("/admin/login");
+    navigate("/marco/login");
   };
 
   return (

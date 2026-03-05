@@ -14,7 +14,7 @@ const AdminGuard = ({ children }: AdminGuardProps) => {
     const checkAdmin = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate("/admin/login");
+        navigate("/marco/login");
         return;
       }
 
@@ -25,7 +25,7 @@ const AdminGuard = ({ children }: AdminGuardProps) => {
 
       if (!data) {
         await supabase.auth.signOut();
-        navigate("/admin/login");
+        navigate("/marco/login");
         return;
       }
 
@@ -34,7 +34,7 @@ const AdminGuard = ({ children }: AdminGuardProps) => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_OUT") {
-        navigate("/admin/login");
+        navigate("/marco/login");
       }
     });
 
