@@ -145,19 +145,15 @@ const BrandsSection = () => {
           />
           {/* Video between Rolex (sort_order 2) and Patek (sort_order 3) */}
           {brand.sort_order === 2 && (
-            <div className="relative w-full h-[25vh] md:h-[35vh] overflow-hidden mb-12 bg-black">
-              <div className="absolute inset-0 overflow-hidden">
-                <iframe
-                  src="https://streamable.com/e/iqao6h?autoplay=1&muted=1&loop=1&nocontrols=1"
-                  frameBorder="0"
-                  allow="autoplay"
-                  allowFullScreen
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                  style={{ border: "none", width: "300%", height: "300%", objectFit: "cover" }}
-                />
-              </div>
-              {/* Hide the blue Streamable logo */}
-              <div className="absolute bottom-0 left-0 w-20 h-12 bg-black z-10" />
+            <div className="relative w-full h-[30vh] md:h-[40vh] overflow-hidden mb-12 bg-black">
+              <iframe
+                src="https://streamable.com/e/iqao6h?autoplay=1&muted=1&loop=1&nocontrols=1"
+                frameBorder="0"
+                allow="autoplay"
+                allowFullScreen
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                style={{ border: "none", width: "177.78vh", height: "56.25vw", minWidth: "100%", minHeight: "100%" }}
+              />
             </div>
           )}
         </div>
