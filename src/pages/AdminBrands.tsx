@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminLayout from "@/components/AdminLayout";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2, Plus, Upload, X, Pencil } from "lucide-react";
+import { Trash2, Plus, X, Pencil, Image } from "lucide-react";
 
 interface Brand {
   id: string;
@@ -20,7 +20,9 @@ const AdminBrands = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ name: "", description: "", sort_order: "0" });
-  const [uploading, setUploading] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
   const fetchBrands = async () => {
     const { data } = await supabase.from("brands").select("*").order("sort_order", { ascending: true });
@@ -34,25 +36,57 @@ const AdminBrands = () => {
     setForm({ name: "", description: "", sort_order: "0" });
     setEditingId(null);
     setShowForm(false);
+    setImageFile(null);
+    setImagePreview(null);
+  };
+
+  const handleImageSelect = (file: File) => {
+    setImageFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => setImagePreview(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const uploadImage = async (brandId: string, file: File): Promise<string | null> => {
+    const fileExt = file.name.split(".").pop();
+    const filePath = `brands/${brandId}/${Date.now()}.${fileExt}`;
+    const { error } = await supabase.storage.from("product-images").upload(filePath, file);
+    if (error) {
+      toast({ title: "Yükleme Hatası", description: error.message, variant: "destructive" });
+      return null;
+    }
+    const { data: publicUrl } = supabase.storage.from("product-images").getPublicUrl(filePath);
+    return publicUrl.publicUrl;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const payload = {
+    setSaving(true);
+
+    const payload: any = {
       name: form.name,
       description: form.description || null,
       sort_order: parseInt(form.sort_order) || 0,
     };
 
     if (editingId) {
+      if (imageFile) {
+        const url = await uploadImage(editingId, imageFile);
+        if (url) payload.image_url = url;
+      }
       const { error } = await supabase.from("brands").update(payload).eq("id", editingId);
-      if (error) { toast({ title: "Hata", description: error.message, variant: "destructive" }); return; }
+      if (error) { toast({ title: "Hata", description: error.message, variant: "destructive" }); setSaving(false); return; }
       toast({ title: "Başarılı", description: "Marka güncellendi." });
     } else {
-      const { error } = await supabase.from("brands").insert(payload);
-      if (error) { toast({ title: "Hata", description: error.message, variant: "destructive" }); return; }
+      const { data, error } = await supabase.from("brands").insert(payload).select().single();
+      if (error) { toast({ title: "Hata", description: error.message, variant: "destructive" }); setSaving(false); return; }
+      if (imageFile && data) {
+        const url = await uploadImage(data.id, imageFile);
+        if (url) await supabase.from("brands").update({ image_url: url }).eq("id", data.id);
+      }
       toast({ title: "Başarılı", description: "Marka eklendi." });
     }
+    setSaving(false);
     resetForm();
     fetchBrands();
   };
@@ -68,27 +102,9 @@ const AdminBrands = () => {
   const handleEdit = (brand: Brand) => {
     setForm({ name: brand.name, description: brand.description || "", sort_order: (brand.sort_order || 0).toString() });
     setEditingId(brand.id);
+    setImagePreview(brand.image_url);
+    setImageFile(null);
     setShowForm(true);
-  };
-
-  const handleImageUpload = async (brandId: string, file: File) => {
-    setUploading(true);
-    const fileExt = file.name.split(".").pop();
-    const filePath = `brands/${brandId}/${Date.now()}.${fileExt}`;
-
-    const { error: uploadError } = await supabase.storage.from("product-images").upload(filePath, file);
-    if (uploadError) {
-      toast({ title: "Yükleme Hatası", description: uploadError.message, variant: "destructive" });
-      setUploading(false);
-      return;
-    }
-
-    const { data: publicUrl } = supabase.storage.from("product-images").getPublicUrl(filePath);
-    await supabase.from("brands").update({ image_url: publicUrl.publicUrl }).eq("id", brandId);
-
-    setUploading(false);
-    toast({ title: "Başarılı", description: "Görsel yüklendi." });
-    fetchBrands();
   };
 
   return (
@@ -128,9 +144,33 @@ const AdminBrands = () => {
               <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
                 rows={2} className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
             </div>
+            <div className="md:col-span-2">
+              <label className="block text-xs text-muted-foreground font-body mb-1">Marka Görseli</label>
+              <div className="flex items-center gap-4">
+                {imagePreview ? (
+                  <div className="relative w-20 h-20 rounded-full overflow-hidden border border-border">
+                    <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                    <button type="button" onClick={() => { setImageFile(null); setImagePreview(null); }}
+                      className="absolute top-0 right-0 bg-destructive text-destructive-foreground rounded-full p-0.5">
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="w-20 h-20 rounded-full bg-muted border border-dashed border-border flex items-center justify-center">
+                    <Image className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                )}
+                <label className="cursor-pointer bg-muted hover:bg-accent text-foreground px-4 py-2 text-sm font-body rounded border border-border transition-colors">
+                  Görsel Seç
+                  <input type="file" accept="image/*" className="hidden"
+                    onChange={(e) => e.target.files?.[0] && handleImageSelect(e.target.files[0])} />
+                </label>
+              </div>
+            </div>
             <div className="md:col-span-2 flex gap-2">
-              <button type="submit" className="bg-foreground text-background px-6 py-2 text-sm font-body rounded hover:opacity-90 transition-opacity">
-                {editingId ? "Güncelle" : "Kaydet"}
+              <button type="submit" disabled={saving}
+                className="bg-foreground text-background px-6 py-2 text-sm font-body rounded hover:opacity-90 transition-opacity disabled:opacity-50">
+                {saving ? "Kaydediliyor..." : editingId ? "Güncelle" : "Kaydet"}
               </button>
               <button type="button" onClick={resetForm} className="border border-border px-6 py-2 text-sm font-body rounded text-foreground hover:bg-muted transition-colors">
                 İptal
@@ -166,16 +206,6 @@ const AdminBrands = () => {
                   <p className="text-xs text-muted-foreground font-body">Sıra: {brand.sort_order}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <label className="cursor-pointer text-muted-foreground hover:text-foreground transition-colors">
-                    <Upload className="h-4 w-4" />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => e.target.files?.[0] && handleImageUpload(brand.id, e.target.files[0])}
-                      disabled={uploading}
-                    />
-                  </label>
                   <button onClick={() => handleEdit(brand)} className="text-muted-foreground hover:text-foreground transition-colors">
                     <Pencil className="h-4 w-4" />
                   </button>
