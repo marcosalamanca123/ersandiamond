@@ -1,8 +1,10 @@
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import CategoryNav from "@/components/CategoryNav";
+import HeroSlider from "@/components/HeroSlider";
 import HeroCategories from "@/components/HeroCategories";
 import PopularCategories from "@/components/PopularCategories";
+import ProductsSection from "@/components/ProductsSection";
 import BrandsSection from "@/components/BrandsSection";
 import Footer from "@/components/Footer";
 
@@ -13,8 +15,10 @@ const Index = () => {
       <Header />
       <CategoryNav />
       <main className="flex-1">
+        <HeroSlider />
         <HeroCategories />
         <PopularCategories />
+        <ProductsSection />
         <BrandsSection />
       </main>
       <Footer />
