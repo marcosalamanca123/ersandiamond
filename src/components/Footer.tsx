@@ -1,49 +1,80 @@
+import { useEffect, useState } from "react";
 import { Phone, Mail, MapPin } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Link } from "react-router-dom";
+
+interface Brand {
+  id: string;
+  name: string;
+}
 
 const Footer = () => {
+  const [settings, setSettings] = useState<Record<string, string>>({});
+  const [brands, setBrands] = useState<Brand[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [settingsRes, brandsRes] = await Promise.all([
+        supabase.from("site_settings").select("*"),
+        supabase.from("brands").select("id, name").order("sort_order", { ascending: true }).limit(6),
+      ]);
+      if (settingsRes.data) {
+        const map: Record<string, string> = {};
+        settingsRes.data.forEach((s) => (map[s.key] = s.value));
+        setSettings(map);
+      }
+      if (brandsRes.data) setBrands(brandsRes.data);
+    };
+    fetchData();
+  }, []);
+
+  const phone = settings.phone || "+0 850 562 13 13";
+  const email = settings.email || "info@ersandiamonds.com";
+  const address = settings.address || "İstanbul, Türkiye";
+  const siteName = settings.site_name || "ERSAN DIAMOND";
+
   return (
     <footer className="bg-foreground text-background">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Logo & Contact */}
           <div>
-            <h3 className="font-display text-xl font-bold tracking-wider mb-4">ERSAN DIAMOND</h3>
+            <h3 className="font-display text-xl font-bold tracking-wider mb-4">{siteName}</h3>
             <div className="space-y-2 text-sm opacity-80">
-              <a href="tel:+908505621313" className="flex items-center gap-2 hover:opacity-100">
-                <Phone className="h-3.5 w-3.5" /> +0 850 562 13 13
+              <a href={`tel:${phone.replace(/\s/g, "")}`} className="flex items-center gap-2 hover:opacity-100">
+                <Phone className="h-3.5 w-3.5" /> {phone}
               </a>
-              <a href="mailto:info@ersandiamonds.com" className="flex items-center gap-2 hover:opacity-100">
-                <Mail className="h-3.5 w-3.5" /> info@ersandiamonds.com
+              <a href={`mailto:${email}`} className="flex items-center gap-2 hover:opacity-100">
+                <Mail className="h-3.5 w-3.5" /> {email}
               </a>
               <div className="flex items-center gap-2">
-                <MapPin className="h-3.5 w-3.5" /> İstanbul, Türkiye
+                <MapPin className="h-3.5 w-3.5" /> {address}
               </div>
             </div>
           </div>
 
-          {/* Kategoriler */}
           <div>
             <h4 className="font-display text-sm font-semibold tracking-wider mb-4">KATEGORİLER</h4>
             <ul className="space-y-2 text-sm opacity-80">
-              <li><a href="#" className="hover:opacity-100">Çantalar</a></li>
-              <li><a href="#" className="hover:opacity-100">Saatler</a></li>
-              <li><a href="#" className="hover:opacity-100">Mücevherler</a></li>
-              <li><a href="#" className="hover:opacity-100">Marka Mücevher</a></li>
+              <li><Link to="/kategori/cantalar" className="hover:opacity-100">Çantalar</Link></li>
+              <li><Link to="/kategori/saatler" className="hover:opacity-100">Saatler</Link></li>
+              <li><Link to="/kategori/mucevherler" className="hover:opacity-100">Mücevherler</Link></li>
+              <li><Link to="/kategori/marka-mucevher" className="hover:opacity-100">Marka Mücevher</Link></li>
             </ul>
           </div>
 
-          {/* Markalar */}
           <div>
             <h4 className="font-display text-sm font-semibold tracking-wider mb-4">MARKALAR</h4>
             <ul className="space-y-2 text-sm opacity-80">
-              <li><a href="#" className="hover:opacity-100">Hermes</a></li>
-              <li><a href="#" className="hover:opacity-100">Rolex</a></li>
-              <li><a href="#" className="hover:opacity-100">Patek Philippe</a></li>
-              <li><a href="#" className="hover:opacity-100">Audemars Piguet</a></li>
+              {brands.map((b) => (
+                <li key={b.id}>
+                  <Link to={`/kategori/${b.name.toLowerCase().replace(/\s+/g, "-")}`} className="hover:opacity-100">
+                    {b.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Bilgi */}
           <div>
             <h4 className="font-display text-sm font-semibold tracking-wider mb-4">BİLGİ</h4>
             <ul className="space-y-2 text-sm opacity-80">
@@ -56,7 +87,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-12 pt-6 border-t border-background/20 text-center text-xs opacity-60">
-          © 2026 Ersan Diamond. Tüm hakları saklıdır.
+          © 2026 {siteName}. Tüm hakları saklıdır.
         </div>
       </div>
     </footer>
