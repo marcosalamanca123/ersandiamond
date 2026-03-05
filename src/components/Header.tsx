@@ -1,6 +1,7 @@
 import { Search, ShoppingBag, User, Heart, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import ersanLogo from "@/assets/ersan-logo.png";
 
 const Header = () => {
   const [cartCount] = useState(0);
@@ -25,11 +26,8 @@ const Header = () => {
         </button>
 
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
-          <span className="text-accent text-2xl">✦</span>
-          <span className="font-display text-xl md:text-2xl font-bold tracking-wider text-foreground">
-            ERSAN DIAMOND
-          </span>
+        <Link to="/" className="flex items-center">
+          <img src={ersanLogo} alt="Ersan Diamond" className="h-7 md:h-8 w-auto" />
         </Link>
 
         {/* Search */}
