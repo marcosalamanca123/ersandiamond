@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Heart, ChevronLeft, Star, Shield, Truck, Award, RefreshCw, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import TopBar from "@/components/TopBar";
@@ -29,6 +29,7 @@ const ProductDetail = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [whatsappNumber, setWhatsappNumber] = useState("905551234567");
+  const viewCount = useMemo(() => Math.floor(Math.random() * 451) + 50, [id]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -168,7 +169,7 @@ const ProductDetail = () => {
 
               <p className="flex items-center gap-2 text-xs text-muted-foreground font-body mb-6">
                 <Eye className="h-4 w-4" />
-                <span><strong className="text-foreground">196</strong> ziyaretçi tarafından görüntülendi.</span>
+                <span><strong className="text-foreground">{viewCount}</strong> ziyaretçi tarafından görüntülendi.</span>
               </p>
 
               {/* Trust badges */}
