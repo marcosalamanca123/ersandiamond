@@ -145,7 +145,7 @@ const BrandsSection = () => {
           />
           {/* Video between Rolex (sort_order 2) and Patek (sort_order 3) */}
           {brand.sort_order === 2 && (
-            <div className="relative w-full py-16 md:py-20 mb-12 bg-black overflow-hidden">
+            <div className="relative w-full py-8 md:py-12 mb-12 bg-black overflow-hidden">
               <div className="container mx-auto px-4 text-center relative z-10">
                 <p className="text-xs md:text-sm tracking-[0.4em] text-white/50 font-body uppercase mb-3">
                   Ersan Diamond
