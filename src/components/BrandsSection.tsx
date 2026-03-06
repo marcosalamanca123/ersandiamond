@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Brand {
   id: string;
@@ -17,6 +18,68 @@ interface Product {
   category: string;
   image_url: string | null;
 }
+
+const ProductsCarousel = ({ products }: { products: Product[] }) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: "left" | "right") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: direction === "left" ? -300 : 300, behavior: "smooth" });
+  };
+
+  return (
+    <div className="container mx-auto px-4 relative">
+      <button
+        onClick={() => scroll("left")}
+        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-background/80 border border-border flex items-center justify-center text-foreground hover:text-primary hover:border-primary transition-all"
+      >
+        <ChevronLeft className="h-5 w-5" />
+      </button>
+      <button
+        onClick={() => scroll("right")}
+        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-background/80 border border-border flex items-center justify-center text-foreground hover:text-primary hover:border-primary transition-all"
+      >
+        <ChevronRight className="h-5 w-5" />
+      </button>
+      <div
+        ref={scrollRef}
+        className="flex gap-4 overflow-x-auto scrollbar-hide px-6"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {products.map((product) => (
+          <Link
+            key={product.id}
+            to={`/urun/${product.id}`}
+            className="group bg-card rounded overflow-hidden hover:shadow-lg transition-shadow flex-shrink-0 w-48 md:w-56"
+          >
+            <div className="aspect-square overflow-hidden bg-muted">
+              {product.image_url ? (
+                <img
+                  src={product.image_url}
+                  alt={product.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs font-body">
+                  Görsel Yok
+                </div>
+              )}
+            </div>
+            <div className="p-3">
+              <p className="text-xs text-muted-foreground font-body tracking-wider uppercase mb-1">
+                {product.brand}
+              </p>
+              <h4 className="font-body text-sm font-medium text-foreground line-clamp-2">
+                {product.name}
+              </h4>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const BrandRow = ({
   brand,
@@ -46,39 +109,7 @@ const BrandRow = ({
         </div>
       </div>
       {hasProducts ? (
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {products.map((product) => (
-              <Link
-                key={product.id}
-                to={`/urun/${product.id}`}
-                className="group bg-card rounded overflow-hidden hover:shadow-lg transition-shadow"
-              >
-                <div className="aspect-square overflow-hidden bg-muted">
-                  {product.image_url ? (
-                    <img
-                      src={product.image_url}
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs font-body">
-                      Görsel Yok
-                    </div>
-                  )}
-                </div>
-                <div className="p-3">
-                  <p className="text-xs text-muted-foreground font-body tracking-wider uppercase mb-1">
-                    {product.brand}
-                  </p>
-                  <h4 className="font-body text-sm font-medium text-foreground line-clamp-2">
-                    {product.name}
-                  </h4>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
+        <ProductsCarousel products={products} />
       ) : (
         <div className="container mx-auto px-4">
           <p className="text-sm text-muted-foreground font-body">Henüz ürün eklenmemiş.</p>
