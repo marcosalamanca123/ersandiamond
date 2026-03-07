@@ -29,16 +29,16 @@ const ProductsCarousel = ({ products }: { products: Product[] }) => {
   };
 
   return (
-    <div className="container mx-auto px-4 relative">
+    <div className="container mx-auto px-4 relative overflow-hidden">
       <button
         onClick={() => scroll("left")}
-        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-background/80 border border-border flex items-center justify-center text-foreground hover:text-primary hover:border-primary transition-all"
+        className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-background/80 border border-border flex items-center justify-center text-foreground hover:text-primary hover:border-primary transition-all"
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
       <button
         onClick={() => scroll("right")}
-        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-background/80 border border-border flex items-center justify-center text-foreground hover:text-primary hover:border-primary transition-all"
+        className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-background/80 border border-border flex items-center justify-center text-foreground hover:text-primary hover:border-primary transition-all"
       >
         <ChevronRight className="h-5 w-5" />
       </button>

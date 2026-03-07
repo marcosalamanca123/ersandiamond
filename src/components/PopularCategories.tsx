@@ -61,7 +61,7 @@ const PopularCategories = () => {
   const displayBrands = [...brands, ...brands, ...brands];
 
   return (
-    <section className="bg-background py-16 overflow-hidden">
+    <section className="bg-background py-16 overflow-x-hidden">
       <div className="container mx-auto px-4">
         <h2 className="font-display text-3xl text-center text-foreground mb-10">
           Popüler Kategoriler
