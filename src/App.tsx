@@ -13,6 +13,7 @@ import AdminProducts from "./pages/AdminProducts";
 import AdminUsers from "./pages/AdminUsers";
 import AdminSettings from "./pages/AdminSettings";
 import AdminBrands from "./pages/AdminBrands";
+import AdminContacts from "./pages/AdminContacts";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
