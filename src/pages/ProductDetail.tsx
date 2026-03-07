@@ -154,13 +154,24 @@ const ProductDetail = () => {
                 </p>
               )}
 
+              {/* Desktop WhatsApp button */}
               <button
                 onClick={handleWhatsApp}
-                className="w-full flex items-center justify-center gap-3 bg-[hsl(142,70%,40%)] hover:bg-[hsl(142,70%,35%)] text-white py-4 px-6 text-sm font-body font-semibold tracking-wider rounded transition-colors mb-4"
+                className="hidden md:flex w-full items-center justify-center gap-3 bg-[hsl(142,70%,40%)] hover:bg-[hsl(142,70%,35%)] text-white py-4 px-6 text-sm font-body font-semibold tracking-wider rounded transition-colors mb-4"
               >
                 <WhatsAppIcon />
                 WHATSAPP İLE BİLGİ AL
               </button>
+
+              {/* Mobile fixed bottom WhatsApp button */}
+              <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
+                <button
+                  onClick={handleWhatsApp}
+                  className="w-full flex items-center justify-center gap-3 bg-[hsl(142,70%,40%)] text-white py-4 px-6 text-base font-body font-bold tracking-wider"
+                >
+                  WHATSAPP İLE BİLGİ AL
+                </button>
+              </div>
 
               <button className="flex items-center gap-2 text-sm text-foreground font-body mb-2">
                 <Heart className="h-4 w-4" />
@@ -202,6 +213,8 @@ const ProductDetail = () => {
             </div>
           </div>
         </div>
+        {/* Spacer for fixed bottom button on mobile */}
+        <div className="h-14 md:hidden" />
       </main>
 
       <Footer />
