@@ -95,10 +95,10 @@ const CategoryNav = () => {
             <Phone className="h-4 w-4" />
             <span>+0 850 562 13 13</span>
           </a>
-          <a href="#" className="flex items-center gap-2 hover:text-primary transition-colors">
+          <Link to="/iletisim" className="flex items-center gap-2 hover:text-primary transition-colors">
             <MapPin className="h-4 w-4" />
             <span>Bize Ulaşın</span>
-          </a>
+          </Link>
         </div>
       </div>
     </nav>
