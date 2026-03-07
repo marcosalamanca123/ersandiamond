@@ -215,6 +215,7 @@ const ProductDetail = () => {
         </div>
         {/* Spacer for fixed bottom button on mobile */}
         <div className="h-14 md:hidden" />
+      </main>
 
       <Footer />
     </div>
