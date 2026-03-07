@@ -78,7 +78,7 @@ const Footer = () => {
           <div>
             <h4 className="font-display text-sm font-semibold tracking-wider mb-4">BİLGİ</h4>
             <ul className="space-y-2 text-sm opacity-80">
-              <li><a href="#" className="hover:opacity-100">Hakkımızda</a></li>
+              <li><Link to="/iletisim" className="hover:opacity-100">Bize Ulaşın</Link></li>
               <li><a href="#" className="hover:opacity-100">Kampanyalar</a></li>
               <li><a href="#" className="hover:opacity-100">Kullanım Koşulları</a></li>
               <li><a href="#" className="hover:opacity-100">Gizlilik Politikası</a></li>

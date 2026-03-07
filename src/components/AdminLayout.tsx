@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { LayoutDashboard, Package, Settings, Users, LogOut, Menu, X, Tag } from "lucide-react";
+import { LayoutDashboard, Package, Settings, Users, LogOut, Menu, X, Tag, MessageSquare } from "lucide-react";
 import AdminGuard from "@/components/AdminGuard";
 
 interface AdminLayoutProps {
@@ -14,6 +14,7 @@ const navItems = [
   { name: "Ürünler", href: "/marco/products", icon: Package },
   { name: "Kullanıcılar", href: "/marco/users", icon: Users },
   { name: "Markalar", href: "/marco/brands", icon: Tag },
+  { name: "Mesajlar", href: "/marco/contacts", icon: MessageSquare },
   { name: "Site Ayarları", href: "/marco/settings", icon: Settings },
 ];
 
