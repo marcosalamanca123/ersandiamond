@@ -14,6 +14,7 @@ const navItems = [
   { name: "Ürünler", href: "/marco/products", icon: Package },
   { name: "Kullanıcılar", href: "/marco/users", icon: Users },
   { name: "Markalar", href: "/marco/brands", icon: Tag },
+  { name: "Mesajlar", href: "/marco/contacts", icon: MessageSquare },
   { name: "Site Ayarları", href: "/marco/settings", icon: Settings },
 ];
 

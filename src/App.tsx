@@ -35,6 +35,7 @@ const App = () => (
           <Route path="/marco/users" element={<AdminUsers />} />
           <Route path="/marco/settings" element={<AdminSettings />} />
           <Route path="/marco/brands" element={<AdminBrands />} />
+          <Route path="/marco/contacts" element={<AdminContacts />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
