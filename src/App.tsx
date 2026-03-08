@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -20,26 +21,28 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/kategori/:slug" element={<Category />} />
-          <Route path="/urun/:id" element={<ProductDetail />} />
-          <Route path="/iletisim" element={<Contact />} />
-          <Route path="/marco/login" element={<AdminLogin />} />
-          <Route path="/marco" element={<AdminDashboard />} />
-          <Route path="/marco/products" element={<AdminProducts />} />
-          <Route path="/marco/users" element={<AdminUsers />} />
-          <Route path="/marco/settings" element={<AdminSettings />} />
-          <Route path="/marco/brands" element={<AdminBrands />} />
-          <Route path="/marco/contacts" element={<AdminContacts />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <LanguageProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/kategori/:slug" element={<Category />} />
+            <Route path="/urun/:id" element={<ProductDetail />} />
+            <Route path="/iletisim" element={<Contact />} />
+            <Route path="/marco/login" element={<AdminLogin />} />
+            <Route path="/marco" element={<AdminDashboard />} />
+            <Route path="/marco/products" element={<AdminProducts />} />
+            <Route path="/marco/users" element={<AdminUsers />} />
+            <Route path="/marco/settings" element={<AdminSettings />} />
+            <Route path="/marco/brands" element={<AdminBrands />} />
+            <Route path="/marco/contacts" element={<AdminContacts />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </LanguageProvider>
   </QueryClientProvider>
 );
 

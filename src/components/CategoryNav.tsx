@@ -1,56 +1,58 @@
 import { ChevronDown, Phone, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-
-const categories = [
-  {
-    name: "ÇANTALAR",
-    slug: "cantalar",
-    hasDropdown: true,
-    subcategories: [
-      { name: "Hermes Çantalar", slug: "hermes-cantalar" },
-      { name: "Chanel Çantalar", slug: "chanel-cantalar" },
-      { name: "Louis Vuitton", slug: "louis-vuitton" },
-      { name: "Tüm Çantalar", slug: "tum-cantalar" },
-    ],
-  },
-  {
-    name: "SAATLER",
-    slug: "saatler",
-    hasDropdown: true,
-    subcategories: [
-      { name: "Rolex", slug: "rolex" },
-      { name: "Patek Philippe", slug: "patek-philippe" },
-      { name: "Audemars Piguet", slug: "audemars-piguet" },
-      { name: "Tüm Saatler", slug: "tum-saatler" },
-    ],
-  },
-  {
-    name: "MÜCEVHER",
-    slug: "mucevher",
-    hasDropdown: true,
-    subcategories: [
-      { name: "Kolye", slug: "kolye" },
-      { name: "Yüzük", slug: "yuzuk" },
-      { name: "Bileklik", slug: "bileklik" },
-      { name: "Tüm Mücevherler", slug: "tum-mucevherler" },
-    ],
-  },
-  {
-    name: "MARKA MÜCEVHER",
-    slug: "marka-mucevher",
-    hasDropdown: true,
-    subcategories: [
-      { name: "Cartier", slug: "cartier" },
-      { name: "Van Cleef", slug: "van-cleef" },
-      { name: "Tiffany", slug: "tiffany" },
-      { name: "Tüm Marka Mücevherler", slug: "tum-marka-mucevher" },
-    ],
-  },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const CategoryNav = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const { t } = useLanguage();
+
+  const categories = [
+    {
+      name: t("cat.bags"),
+      slug: "cantalar",
+      hasDropdown: true,
+      subcategories: [
+        { name: t("cat.hermes_bags"), slug: "hermes-cantalar" },
+        { name: t("cat.chanel_bags"), slug: "chanel-cantalar" },
+        { name: t("cat.louis_vuitton"), slug: "louis-vuitton" },
+        { name: t("cat.all_bags"), slug: "tum-cantalar" },
+      ],
+    },
+    {
+      name: t("cat.watches"),
+      slug: "saatler",
+      hasDropdown: true,
+      subcategories: [
+        { name: t("cat.rolex"), slug: "rolex" },
+        { name: t("cat.patek"), slug: "patek-philippe" },
+        { name: t("cat.ap"), slug: "audemars-piguet" },
+        { name: t("cat.all_watches"), slug: "tum-saatler" },
+      ],
+    },
+    {
+      name: t("cat.jewelry"),
+      slug: "mucevher",
+      hasDropdown: true,
+      subcategories: [
+        { name: t("cat.necklace"), slug: "kolye" },
+        { name: t("cat.ring"), slug: "yuzuk" },
+        { name: t("cat.bracelet"), slug: "bileklik" },
+        { name: t("cat.all_jewelry"), slug: "tum-mucevherler" },
+      ],
+    },
+    {
+      name: t("cat.brand_jewelry"),
+      slug: "marka-mucevher",
+      hasDropdown: true,
+      subcategories: [
+        { name: t("cat.cartier"), slug: "cartier" },
+        { name: t("cat.van_cleef"), slug: "van-cleef" },
+        { name: t("cat.tiffany"), slug: "tiffany" },
+        { name: t("cat.all_brand_jewelry"), slug: "tum-marka-mucevher" },
+      ],
+    },
+  ];
 
   return (
     <nav className="border-b border-border bg-background relative z-40">
@@ -58,7 +60,7 @@ const CategoryNav = () => {
         <div className="flex items-center gap-0">
           {categories.map((cat, index) => (
             <div
-              key={cat.name}
+              key={cat.slug}
               className="relative"
               onMouseEnter={() => setOpenIndex(index)}
               onMouseLeave={() => setOpenIndex(null)}
@@ -97,7 +99,7 @@ const CategoryNav = () => {
           </a>
           <Link to="/iletisim" className="flex items-center gap-2 hover:text-primary transition-colors">
             <MapPin className="h-4 w-4" />
-            <span>Bize Ulaşın</span>
+            <span>{t("cat.contact")}</span>
           </Link>
         </div>
       </div>

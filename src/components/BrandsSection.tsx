@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Brand {
   id: string;
@@ -88,6 +89,7 @@ const BrandRow = ({
   brand: Brand;
   products: Product[];
 }) => {
+  const { t } = useLanguage();
   const hasProducts = products.length > 0;
 
   return (
@@ -104,7 +106,7 @@ const BrandRow = ({
             to={`/kategori/${brand.name.toLowerCase().replace(/\s+/g, "-")}`}
             className="text-xs font-body tracking-widest text-primary hover:text-accent transition-colors uppercase"
           >
-            Tümünü Gör →
+            {t("brands.view_all")}
           </Link>
         </div>
       </div>
@@ -112,7 +114,7 @@ const BrandRow = ({
         <ProductsCarousel products={products} />
       ) : (
         <div className="container mx-auto px-4">
-          <p className="text-sm text-muted-foreground font-body">Henüz ürün eklenmemiş.</p>
+          <p className="text-sm text-muted-foreground font-body">{t("brands.no_products")}</p>
         </div>
       )}
     </div>
@@ -122,6 +124,7 @@ const BrandRow = ({
 const BrandsSection = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [productsByBrand, setProductsByBrand] = useState<Record<string, Product[]>>({});
+  const { t } = useLanguage();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -165,30 +168,28 @@ const BrandsSection = () => {
     <section className="bg-background py-16">
       <div className="container mx-auto px-4 mb-10">
         <h2 className="font-display text-3xl text-center text-foreground italic tracking-[0.2em]">
-          Markalar
+          {t("brands.title")}
         </h2>
       </div>
-      {brands.map((brand, index) => (
+      {brands.map((brand) => (
         <div key={brand.id}>
           <BrandRow
             brand={brand}
             products={productsByBrand[brand.name.toLowerCase()] || []}
           />
-          {/* Video between Rolex (sort_order 2) and Patek (sort_order 3) */}
           {brand.sort_order === 2 && (
             <div className="relative w-full py-8 md:py-12 mb-12 bg-black overflow-hidden">
               <div className="container mx-auto px-4 text-center relative z-10">
                 <p className="text-xs md:text-sm tracking-[0.4em] text-white/50 font-body uppercase mb-3">
-                  Ersan Diamond
+                  {t("brands.shipping_sub")}
                 </p>
                 <h3 className="font-display text-3xl md:text-5xl tracking-[0.2em] text-white italic mb-4">
-                  Güvenli Kargo
+                  {t("brands.shipping_title")}
                 </h3>
                 <p className="text-sm md:text-base text-white/60 font-body max-w-lg mx-auto leading-relaxed">
-                  Tüm ürünlerimiz özel sigortalı ve güvenli paketleme ile kapınıza kadar ulaştırılır.
+                  {t("brands.shipping_desc")}
                 </p>
               </div>
-              {/* Decorative line */}
               <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-y-1/2" />
             </div>
           )}

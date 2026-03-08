@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Brand {
   id: string;
@@ -15,6 +16,7 @@ const PopularCategories = () => {
   const animationRef = useRef<number>();
   const isPaused = useRef(false);
   const scrollSpeed = 0.5;
+  const { t } = useLanguage();
 
   useEffect(() => {
     const fetchBrands = async () => {
@@ -64,7 +66,7 @@ const PopularCategories = () => {
     <section className="bg-background py-16 overflow-x-hidden">
       <div className="container mx-auto px-4">
         <h2 className="font-display text-3xl text-center text-foreground mb-10">
-          Popüler Kategoriler
+          {t("popular.title")}
         </h2>
       </div>
       <div className="relative group/section">

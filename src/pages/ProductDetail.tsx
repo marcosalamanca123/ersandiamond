@@ -6,6 +6,7 @@ import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import CategoryNav from "@/components/CategoryNav";
 import Footer from "@/components/Footer";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const WhatsAppIcon = () => (
   <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current">
@@ -24,6 +25,7 @@ interface Product {
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const { t } = useLanguage();
   const [product, setProduct] = useState<Product | null>(null);
   const [images, setImages] = useState<string[]>([]);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -50,7 +52,7 @@ const ProductDetail = () => {
   const handleWhatsApp = () => {
     if (!product) return;
     const message = encodeURIComponent(
-      `Merhaba, ${product.brand} ${product.name} ürünü hakkında bilgi almak ve satın almak istiyorum.`
+      t("product.whatsapp_msg", { brand: product.brand, name: product.name })
     );
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank");
   };
@@ -62,7 +64,7 @@ const ProductDetail = () => {
         <Header />
         <CategoryNav />
         <div className="flex-1 flex items-center justify-center">
-          <p className="text-muted-foreground font-body">Yükleniyor...</p>
+          <p className="text-muted-foreground font-body">{t("product.loading")}</p>
         </div>
         <Footer />
       </div>
@@ -76,9 +78,9 @@ const ProductDetail = () => {
         <Header />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <h1 className="font-display text-2xl text-foreground mb-4">Ürün Bulunamadı</h1>
+            <h1 className="font-display text-2xl text-foreground mb-4">{t("product.not_found")}</h1>
             <Link to="/" className="text-primary hover:text-accent transition-colors font-body">
-              Ana Sayfaya Dön
+              {t("product.back_home")}
             </Link>
           </div>
         </div>
@@ -100,7 +102,7 @@ const ProductDetail = () => {
             className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors font-body mb-6"
           >
             <ChevronLeft className="h-4 w-4" />
-            Ana Sayfa
+            {t("product.home")}
           </Link>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
@@ -114,7 +116,7 @@ const ProductDetail = () => {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm font-body">
-                    Görsel Yok
+                    {t("product.no_image")}
                   </div>
                 )}
               </div>
@@ -145,7 +147,7 @@ const ProductDetail = () => {
                     <Star key={i} className="h-4 w-4 fill-current" />
                   ))}
                 </div>
-                <span className="text-xs text-muted-foreground font-body">0 değerlendirme</span>
+                <span className="text-xs text-muted-foreground font-body">0 {t("product.reviews")}</span>
               </div>
 
               {product.description && (
@@ -160,7 +162,7 @@ const ProductDetail = () => {
                 className="hidden md:flex w-full items-center justify-center gap-3 bg-[hsl(142,70%,40%)] hover:bg-[hsl(142,70%,35%)] text-white py-4 px-6 text-sm font-body font-semibold tracking-wider rounded transition-colors mb-4"
               >
                 <WhatsAppIcon />
-                WHATSAPP İLE BİLGİ AL
+                {t("product.whatsapp")}
               </button>
 
               {/* Mobile fixed bottom WhatsApp button */}
@@ -169,18 +171,18 @@ const ProductDetail = () => {
                   onClick={handleWhatsApp}
                   className="w-full flex items-center justify-center gap-3 bg-[hsl(142,70%,40%)] text-white py-4 px-6 text-base font-body font-bold tracking-wider"
                 >
-                  WHATSAPP İLE BİLGİ AL
+                  {t("product.whatsapp")}
                 </button>
               </div>
 
               <button className="flex items-center gap-2 text-sm text-foreground font-body mb-2">
                 <Heart className="h-4 w-4" />
-                Favorilerime Ekle
+                {t("product.favorite")}
               </button>
 
               <p className="flex items-center gap-2 text-xs text-muted-foreground font-body mb-6">
                 <Eye className="h-4 w-4" />
-                <span><strong className="text-foreground">{viewCount}</strong> ziyaretçi tarafından görüntülendi.</span>
+                <span><strong className="text-foreground">{viewCount}</strong> {t("product.viewed_by")}</span>
               </p>
 
               {/* Trust badges */}
@@ -188,27 +190,27 @@ const ProductDetail = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                   <div className="flex flex-col items-center gap-2">
                     <Truck className="h-7 w-7 text-primary" />
-                    <span className="text-[11px] font-body text-foreground leading-tight">Sigortalı ve Hızlı Kargo</span>
+                    <span className="text-[11px] font-body text-foreground leading-tight">{t("product.shipping")}</span>
                   </div>
                   <div className="flex flex-col items-center gap-2">
                     <Award className="h-7 w-7 text-primary" />
-                    <span className="text-[11px] font-body text-foreground leading-tight">Orijinal Ürün Sertifikası</span>
+                    <span className="text-[11px] font-body text-foreground leading-tight">{t("product.certificate")}</span>
                   </div>
                   <div className="flex flex-col items-center gap-2">
                     <Shield className="h-7 w-7 text-primary" />
-                    <span className="text-[11px] font-body text-foreground leading-tight">Güvenli Alışveriş</span>
+                    <span className="text-[11px] font-body text-foreground leading-tight">{t("product.safe_shopping")}</span>
                   </div>
                   <div className="flex flex-col items-center gap-2">
                     <RefreshCw className="h-7 w-7 text-primary" />
-                    <span className="text-[11px] font-body text-foreground leading-tight">Kolay Değişim</span>
+                    <span className="text-[11px] font-body text-foreground leading-tight">{t("product.easy_exchange")}</span>
                   </div>
                 </div>
               </div>
 
               {/* Product info */}
               <div className="space-y-2 text-sm font-body">
-                <p><span className="text-muted-foreground">Kategorisi:</span> <span className="text-foreground">{product.category}</span></p>
-                <p><span className="text-muted-foreground">Marka:</span> <span className="text-foreground">{product.brand}</span></p>
+                <p><span className="text-muted-foreground">{t("product.category_label")}</span> <span className="text-foreground">{product.category}</span></p>
+                <p><span className="text-muted-foreground">{t("product.brand_label")}</span> <span className="text-foreground">{product.brand}</span></p>
               </div>
             </div>
           </div>

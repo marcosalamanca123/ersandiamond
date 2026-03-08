@@ -9,16 +9,18 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Send } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Contact = () => {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
-      toast({ title: "Hata", description: "Lütfen zorunlu alanları doldurun.", variant: "destructive" });
+      toast({ title: t("contact.error_title"), description: t("contact.error_required"), variant: "destructive" });
       return;
     }
     setLoading(true);
@@ -30,9 +32,9 @@ const Contact = () => {
     });
     setLoading(false);
     if (error) {
-      toast({ title: "Hata", description: "Mesaj gönderilemedi. Lütfen tekrar deneyin.", variant: "destructive" });
+      toast({ title: t("contact.error_title"), description: t("contact.error_send"), variant: "destructive" });
     } else {
-      toast({ title: "Başarılı", description: "Mesajınız başarıyla gönderildi." });
+      toast({ title: t("contact.success_title"), description: t("contact.success_msg") });
       setForm({ name: "", email: "", phone: "", message: "" });
     }
   };
@@ -45,24 +47,24 @@ const Contact = () => {
 
       <main className="flex-1">
         <div className="container mx-auto px-4 py-10 max-w-xl">
-          <h1 className="font-display text-2xl md:text-3xl text-foreground text-center mb-2">Bize Ulaşın</h1>
+          <h1 className="font-display text-2xl md:text-3xl text-foreground text-center mb-2">{t("contact.title")}</h1>
           <p className="text-sm text-muted-foreground font-body text-center mb-8">
-            Sorularınız veya talepleriniz için formu doldurun, en kısa sürede size dönüş yapalım.
+            {t("contact.subtitle")}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-sm font-body text-foreground mb-1 block">Ad Soyad *</label>
+              <label className="text-sm font-body text-foreground mb-1 block">{t("contact.name")}</label>
               <Input
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="Adınız ve soyadınız"
+                placeholder={t("contact.name_placeholder")}
                 maxLength={100}
                 required
               />
             </div>
             <div>
-              <label className="text-sm font-body text-foreground mb-1 block">E-posta *</label>
+              <label className="text-sm font-body text-foreground mb-1 block">{t("contact.email")}</label>
               <Input
                 type="email"
                 value={form.email}
@@ -73,7 +75,7 @@ const Contact = () => {
               />
             </div>
             <div>
-              <label className="text-sm font-body text-foreground mb-1 block">Telefon</label>
+              <label className="text-sm font-body text-foreground mb-1 block">{t("contact.phone")}</label>
               <Input
                 type="tel"
                 value={form.phone}
@@ -83,11 +85,11 @@ const Contact = () => {
               />
             </div>
             <div>
-              <label className="text-sm font-body text-foreground mb-1 block">Mesajınız *</label>
+              <label className="text-sm font-body text-foreground mb-1 block">{t("contact.message")}</label>
               <Textarea
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
-                placeholder="Mesajınızı buraya yazın..."
+                placeholder={t("contact.message_placeholder")}
                 rows={5}
                 maxLength={1000}
                 required
@@ -95,7 +97,7 @@ const Contact = () => {
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               <Send className="h-4 w-4 mr-2" />
-              {loading ? "Gönderiliyor..." : "Gönder"}
+              {loading ? t("contact.sending") : t("contact.send")}
             </Button>
           </form>
         </div>
