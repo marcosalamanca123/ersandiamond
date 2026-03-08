@@ -27,7 +27,7 @@ const HeroSlider = () => {
       {/* Streamable embed as background video */}
       <div className="absolute inset-[-2px] overflow-hidden">
         <iframe
-          src="https://streamable.com/e/amat0n?autoplay=1&muted=1&loop=1&nocontrols=1"
+          src="https://streamable.com/e/kcavml?autoplay=1&muted=1&loop=1&nocontrols=1"
           frameBorder="0"
           allow="autoplay"
           allowFullScreen
