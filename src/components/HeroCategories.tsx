@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
 import categoryBags from "@/assets/category-bags.png";
 import categoryWatches from "@/assets/category-watches.png";
 import categoryJewelry from "@/assets/category-jewelry.png";
@@ -17,14 +18,15 @@ const categoryBrands: Record<string, string[]> = {
   mucevher: ["Cartier", "Van Cleef & Arpels"],
 };
 
-const categories = [
-  { name: "ÇANTALAR", image: categoryBags, slug: "cantalar" },
-  { name: "SAATLER", image: categoryWatches, slug: "saatler" },
-  { name: "MÜCEVHERLER", image: categoryJewelry, slug: "mucevher" },
-];
-
 const HeroCategories = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
+  const { t } = useLanguage();
+
+  const categories = [
+    { name: t("herocat.bags"), image: categoryBags, slug: "cantalar" },
+    { name: t("herocat.watches"), image: categoryWatches, slug: "saatler" },
+    { name: t("herocat.jewelry"), image: categoryJewelry, slug: "mucevher" },
+  ];
 
   useEffect(() => {
     supabase.from("brands").select("id, name, image_url").then(({ data }) => {
@@ -43,7 +45,7 @@ const HeroCategories = () => {
               )
             );
             return (
-              <div key={cat.name} className="flex flex-col items-center text-center">
+              <div key={cat.slug} className="flex flex-col items-center text-center">
                 <Link
                   to={`/kategori/${cat.slug}`}
                   className="group flex flex-col items-center"

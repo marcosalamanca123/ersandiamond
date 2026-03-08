@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Brand {
   id: string;
@@ -11,6 +12,7 @@ interface Brand {
 const Footer = () => {
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [brands, setBrands] = useState<Brand[]>([]);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,17 +55,17 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-display text-sm font-semibold tracking-wider mb-4">KATEGORİLER</h4>
+            <h4 className="font-display text-sm font-semibold tracking-wider mb-4">{t("footer.categories")}</h4>
             <ul className="space-y-2 text-sm opacity-80">
-              <li><Link to="/kategori/cantalar" className="hover:opacity-100">Çantalar</Link></li>
-              <li><Link to="/kategori/saatler" className="hover:opacity-100">Saatler</Link></li>
-              <li><Link to="/kategori/mucevherler" className="hover:opacity-100">Mücevherler</Link></li>
-              <li><Link to="/kategori/marka-mucevher" className="hover:opacity-100">Marka Mücevher</Link></li>
+              <li><Link to="/kategori/cantalar" className="hover:opacity-100">{t("footer.bags")}</Link></li>
+              <li><Link to="/kategori/saatler" className="hover:opacity-100">{t("footer.watches")}</Link></li>
+              <li><Link to="/kategori/mucevherler" className="hover:opacity-100">{t("footer.jewelry")}</Link></li>
+              <li><Link to="/kategori/marka-mucevher" className="hover:opacity-100">{t("footer.brand_jewelry")}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-display text-sm font-semibold tracking-wider mb-4">MARKALAR</h4>
+            <h4 className="font-display text-sm font-semibold tracking-wider mb-4">{t("footer.brands")}</h4>
             <ul className="space-y-2 text-sm opacity-80">
               {brands.map((b) => (
                 <li key={b.id}>
@@ -76,18 +78,18 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-display text-sm font-semibold tracking-wider mb-4">BİLGİ</h4>
+            <h4 className="font-display text-sm font-semibold tracking-wider mb-4">{t("footer.info")}</h4>
             <ul className="space-y-2 text-sm opacity-80">
-              <li><Link to="/iletisim" className="hover:opacity-100">Bize Ulaşın</Link></li>
-              <li><a href="#" className="hover:opacity-100">Kampanyalar</a></li>
-              <li><a href="#" className="hover:opacity-100">Kullanım Koşulları</a></li>
-              <li><a href="#" className="hover:opacity-100">Gizlilik Politikası</a></li>
+              <li><Link to="/iletisim" className="hover:opacity-100">{t("footer.contact")}</Link></li>
+              <li><a href="#" className="hover:opacity-100">{t("footer.campaigns")}</a></li>
+              <li><a href="#" className="hover:opacity-100">{t("footer.terms")}</a></li>
+              <li><a href="#" className="hover:opacity-100">{t("footer.privacy")}</a></li>
             </ul>
           </div>
         </div>
 
         <div className="mt-12 pt-6 border-t border-background/20 text-center text-xs opacity-60">
-          © 2026 {siteName}. Tüm hakları saklıdır.
+          © 2026 {siteName}. {t("footer.rights")}
         </div>
       </div>
     </footer>

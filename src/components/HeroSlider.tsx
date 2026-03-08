@@ -1,6 +1,9 @@
 import { ChevronDown } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const HeroSlider = () => {
+  const { t } = useLanguage();
+
   const scrollDown = () => {
     const target = window.innerHeight;
     const start = window.scrollY;
@@ -24,7 +27,6 @@ const HeroSlider = () => {
 
   return (
     <section className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden bg-black">
-      {/* Streamable embed as background video */}
       <div className="absolute inset-[-2px] overflow-hidden">
         <iframe
           src="https://streamable.com/e/kcavml?autoplay=1&muted=1&loop=1&nocontrols=1"
@@ -40,7 +42,7 @@ const HeroSlider = () => {
           onClick={scrollDown}
           className="pointer-events-auto inline-flex flex-col items-center gap-2 border border-background/70 px-8 py-3 text-sm tracking-widest text-background/90 hover:bg-background hover:text-foreground transition-all duration-300 font-body backdrop-blur-sm"
         >
-          KEŞFET
+          {t("hero.discover")}
           <ChevronDown className="h-4 w-4 animate-bounce" />
         </button>
       </div>

@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import CategoryNav from "@/components/CategoryNav";
 import Footer from "@/components/Footer";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Product {
   id: string;
@@ -27,7 +28,6 @@ const slugMap: Record<string, { type: "category" | "brand"; value: string; title
   "tum-mucevherler": { type: "category", value: "Mücevherler", title: "TÜM MÜCEVHERLER" },
   "marka-mucevher": { type: "category", value: "Mücevherler", title: "MARKA MÜCEVHER" },
   "tum-marka-mucevher": { type: "category", value: "Mücevherler", title: "TÜM MARKA MÜCEVHERLER" },
-  // Brand slugs
   "hermes-cantalar": { type: "brand", value: "Hermes", title: "HERMÈS ÇANTALAR" },
   "chanel-cantalar": { type: "brand", value: "Chanel", title: "CHANEL ÇANTALAR" },
   "louis-vuitton": { type: "brand", value: "Louis Vuitton", title: "LOUIS VUITTON" },
@@ -48,6 +48,7 @@ const Category = () => {
   const { slug } = useParams<{ slug: string }>();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useLanguage();
 
   const mapping = slug ? slugMap[slug] : null;
   const title = mapping?.title || slug?.toUpperCase().replace(/-/g, " ") || "";
@@ -64,7 +65,6 @@ const Category = () => {
           query = query.eq("brand", mapping.value);
         }
       } else if (slug) {
-        // Try matching brand name from slug
         const brandName = slug.replace(/-/g, " ");
         query = query.or(`brand.ilike.%${brandName}%,category.ilike.%${brandName}%`);
       }
@@ -72,7 +72,6 @@ const Category = () => {
       const { data: productsData } = await query;
 
       if (productsData) {
-        // Fetch images
         const ids = productsData.map((p) => p.id);
         const { data: imagesData } = await supabase
           .from("product_images")
@@ -119,7 +118,7 @@ const Category = () => {
           ) : products.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-muted-foreground font-body text-lg">
-                Bu kategoride henüz ürün bulunmamaktadır.
+                {t("category.no_products")}
               </p>
             </div>
           ) : (
@@ -139,7 +138,7 @@ const Category = () => {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs font-body">
-                        Görsel Yok
+                        {t("category.no_image")}
                       </div>
                     )}
                   </div>

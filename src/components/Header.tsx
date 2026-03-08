@@ -2,22 +2,23 @@ import { Search, ShoppingBag, User, Heart, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import ersanLogo from "@/assets/ersan-logo.png";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Header = () => {
   const [cartCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   const categories = [
-    { name: "ÇANTALAR", href: "#" },
-    { name: "SAATLER", href: "#" },
-    { name: "MÜCEVHER", href: "#" },
-    { name: "MARKA MÜCEVHER", href: "#" },
+    { name: t("cat.bags"), href: "#" },
+    { name: t("cat.watches"), href: "#" },
+    { name: t("cat.jewelry"), href: "#" },
+    { name: t("cat.brand_jewelry"), href: "#" },
   ];
 
   return (
     <header className="border-b border-border bg-background">
       <div className="container mx-auto flex items-center justify-between px-4 py-4">
-        {/* Mobile menu button */}
         <button
           className="md:hidden text-foreground"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -25,17 +26,15 @@ const Header = () => {
           {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
 
-        {/* Logo */}
         <Link to="/" className="flex items-center">
           <img src={ersanLogo} alt="Ersan Diamond" className="h-7 md:h-8 w-auto" />
         </Link>
 
-        {/* Search */}
         <div className="hidden md:flex flex-1 max-w-xl mx-8">
           <div className="relative w-full">
             <input
               type="text"
-              placeholder="Ürün Ara"
+              placeholder={t("header.search")}
               className="w-full rounded border border-border bg-background px-4 py-2.5 pr-10 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
             />
             <button className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
@@ -44,7 +43,6 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex items-center gap-4">
           <button className="text-foreground hover:text-primary transition-colors">
             <User className="h-5 w-5" />
@@ -63,14 +61,13 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-border bg-background">
           <div className="px-4 py-2">
             <div className="relative mb-3">
               <input
                 type="text"
-                placeholder="Ürün Ara"
+                placeholder={t("header.search")}
                 className="w-full rounded border border-border bg-background px-4 py-2.5 pr-10 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
               />
               <button className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
