@@ -29,7 +29,7 @@ const HeroSlider = () => {
     <section className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden bg-black">
       <div className="absolute inset-[-2px] overflow-hidden">
         <iframe
-          src="https://streamable.com/e/kcavml?autoplay=1&muted=1&loop=1&nocontrols=1"
+          src="https://streamable.com/e/83vx3m?autoplay=1&muted=1&loop=1&nocontrols=1"
           frameBorder="0"
           allow="autoplay"
           allowFullScreen
